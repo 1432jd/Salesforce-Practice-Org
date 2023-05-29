@@ -30,4 +30,34 @@ public class MyUtility {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+
+    @AuraEnabled
+    public static void uploadFile(String recordId, String contentVersionId){
+        try {
+
+            List<Contact> listOfContact = [SELECT id FROM Contact WHERE AccountId =: recordId LIMIT 1];
+
+            if(!listOfContact.isEmpty()){
+
+                String contactId = listOfContact[0].Id;
+                ContentDocumentLink cdl = new ContentDocumentLink();
+                cdl.ContentDocumentId = [
+                SELECT ContentDocumentId 
+                FROM ContentVersion 
+                WHERE Id =: contentVersionId
+                ].ContentDocumentId;
+                cdl.LinkedEntityId = recordId;
+    
+                cdl.ShareType = 'V';
+    
+                insert cdl;
+            }
+
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+
 }
