@@ -38,23 +38,25 @@ public class MyUtility {
 
             List<Contact> listOfContact = [SELECT id FROM Contact WHERE AccountId =: recordId LIMIT 1];
 
-            if(!listOfContact.isEmpty()){
+            String contactId = listOfContact[0].Id;
+            System.debug(' contactId >> '+contactId);
+            ContentDocumentLink cdl = new ContentDocumentLink();
+            cdl.ContentDocumentId = [
+            SELECT ContentDocumentId 
+            FROM ContentVersion 
+            WHERE Id =: contentVersionId
+            ].ContentDocumentId;
+            cdl.LinkedEntityId = contactId;
 
-                String contactId = listOfContact[0].Id;
-                ContentDocumentLink cdl = new ContentDocumentLink();
-                cdl.ContentDocumentId = [
-                SELECT ContentDocumentId 
-                FROM ContentVersion 
-                WHERE Id =: contentVersionId
-                ].ContentDocumentId;
-                cdl.LinkedEntityId = recordId;
-    
-                cdl.ShareType = 'V';
-    
-                insert cdl;
-            }
+            cdl.ShareType = 'V';
+
+            insert cdl;
 
         } catch (Exception e) {
+            System.debug('Exp msg : '+e.getMessage());
+
+            System.debug('Exp msg : '+e.getLineNumber());
+
             throw new AuraHandledException(e.getMessage());
         }
     }

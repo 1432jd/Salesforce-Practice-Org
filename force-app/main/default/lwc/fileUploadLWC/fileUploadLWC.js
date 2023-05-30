@@ -21,7 +21,7 @@ export default class FileUploadExample extends LightningElement {
             console.log('result >>', result);
         })
         .catch(error => {
-            console.log("Error occured");
+            console.log("Error occured",error.message);
         })
 
     }
